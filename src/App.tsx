@@ -507,6 +507,17 @@ function App() {
       : visibleRideCards;
 
   const skeletonRideCards = [0, 1, 2];
+  const hasRideCarousel = rideSource !== 'loading' && rideCards.length > 3;
+
+  function handleRidePrev() {
+    if (!hasRideCarousel) return;
+    setRideCarouselIndex((prev) => (prev - 1 + rideCards.length) % rideCards.length);
+  }
+
+  function handleRideNext() {
+    if (!hasRideCarousel) return;
+    setRideCarouselIndex((prev) => (prev + 1) % rideCards.length);
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -617,32 +628,43 @@ function App() {
 
         <AnimatePresence>
           {menuOpen && (
-            <motion.aside
-              className="mobile-menu"
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              transition={{ type: 'spring', stiffness: 220, damping: 24 }}
-            >
-              <a href="#home" onClick={() => setMenuOpen(false)}>
-                Home
-              </a>
-              <a href="#about" onClick={() => setMenuOpen(false)}>
-                About
-              </a>
-              <a href="#route" onClick={() => setMenuOpen(false)}>
-                Route
-              </a>
-              <a href="#rides" onClick={() => setMenuOpen(false)}>
-                Rides
-              </a>
-              <a href="#gallery" onClick={() => setMenuOpen(false)}>
-                Gallery
-              </a>
-              <a href="#contact" onClick={() => setMenuOpen(false)}>
-                Contact
-              </a>
-            </motion.aside>
+            <>
+              <motion.button
+                type="button"
+                className="menu-backdrop"
+                aria-label="Close navigation menu"
+                onClick={() => setMenuOpen(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+              <motion.aside
+                className="mobile-menu"
+                initial={{ opacity: 0, x: '100%' }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: '100%' }}
+                transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+              >
+                <a href="#home" onClick={() => setMenuOpen(false)}>
+                  Home
+                </a>
+                <a href="#about" onClick={() => setMenuOpen(false)}>
+                  About
+                </a>
+                <a href="#route" onClick={() => setMenuOpen(false)}>
+                  Route
+                </a>
+                <a href="#rides" onClick={() => setMenuOpen(false)}>
+                  Rides
+                </a>
+                <a href="#gallery" onClick={() => setMenuOpen(false)}>
+                  Gallery
+                </a>
+                <a href="#contact" onClick={() => setMenuOpen(false)}>
+                  Contact
+                </a>
+              </motion.aside>
+            </>
           )}
         </AnimatePresence>
 
@@ -748,12 +770,38 @@ function App() {
 
           <section id="rides" className="rides-section">
             <motion.div
+              className="rides-head"
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.35 }}
             >
               <p className="tag">Ride Dispatch Board</p>
-              <h2>UPCOMING RIDES</h2>
+              <div className="rides-head-row">
+                <h2>UPCOMING RIDES</h2>
+                {hasRideCarousel && (
+                  <div className="rides-nav" aria-label="Upcoming rides controls">
+                    <button type="button" className="ride-nav-btn" onClick={handleRidePrev} aria-label="Previous rides">
+                      Prev
+                    </button>
+                    <button type="button" className="ride-nav-btn" onClick={handleRideNext} aria-label="Next rides">
+                      Next
+                    </button>
+                  </div>
+                )}
+              </div>
+              {hasRideCarousel && (
+                <div className="rides-dots" aria-label="Ride pages">
+                  {rideCards.map((ride, index) => (
+                    <button
+                      key={`ride-dot-${ride.title}-${index}`}
+                      type="button"
+                      className={`ride-dot${index === rideCarouselIndex ? ' active' : ''}`}
+                      aria-label={`Go to ride ${index + 1}`}
+                      onClick={() => setRideCarouselIndex(index)}
+                    />
+                  ))}
+                </div>
+              )}
             </motion.div>
             <div className="rides-grid">
               {rideSource === 'loading' &&

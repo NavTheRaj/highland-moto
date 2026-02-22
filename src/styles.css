@@ -214,6 +214,16 @@ body {
   border-left: 1px solid var(--line);
 }
 
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  border: 0;
+  background: rgba(5, 8, 7, 0.5);
+  backdrop-filter: blur(1px);
+  cursor: pointer;
+}
+
 .mobile-menu a {
   color: var(--text);
   text-decoration: none;
@@ -693,6 +703,60 @@ main {
   font-size: clamp(2.3rem, 7.2vw, 4.8rem);
 }
 
+.rides-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.rides-nav {
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.ride-nav-btn {
+  border: 1px solid var(--line);
+  color: var(--text);
+  background: rgba(24, 31, 27, 0.85);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ride-nav-btn:hover {
+  border-color: var(--trail);
+  transform: translateY(-1px);
+}
+
+.rides-dots {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.05rem 0 1.05rem;
+}
+
+.ride-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.16);
+  padding: 0;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ride-dot.active {
+  width: 20px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--orange), var(--trail));
+  border-color: rgba(245, 181, 97, 0.65);
+}
+
 .rides-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -996,9 +1060,13 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .rides-head-row {
+    align-items: center;
+  }
+
   .floating-bike {
     bottom: 5vh;
-    width: 88px;
+    width: 70px;
   }
 
   .hero-bike {
@@ -1063,6 +1131,17 @@ main {
 
   .hero h1 {
     font-size: clamp(2.7rem, 16vw, 4.2rem);
+  }
+
+  .rides-head-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .floating-bike {
+    width: 56px;
+    bottom: 4.5vh;
   }
 
 }
