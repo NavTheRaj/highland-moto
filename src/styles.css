@@ -906,12 +906,27 @@ main {
   font-size: 1.35rem;
 }
 
-.masonry-grid img {
+.gallery-tile-btn {
   width: 100%;
   display: block;
   margin-bottom: 0.9rem;
   border-radius: 0.82rem;
   border: 1px solid var(--line);
+  background: transparent;
+  padding: 0;
+  break-inside: avoid;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.gallery-tile-btn:focus-visible {
+  outline: 2px solid var(--dust);
+  outline-offset: 2px;
+}
+
+.gallery-tile-btn img {
+  width: 100%;
+  display: block;
 }
 
 .contact {

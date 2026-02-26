@@ -8,6 +8,10 @@ import {
   useScroll,
   useTransform
 } from 'framer-motion';
+import Lightbox from 'yet-another-react-lightbox';
+import Counter from 'yet-another-react-lightbox/plugins/counter';
+import 'yet-another-react-lightbox/styles.css';
+import 'yet-another-react-lightbox/plugins/counter.css';
 
 type TrailPoint = {
   x: number;
@@ -342,6 +346,7 @@ function App() {
   const [gallerySource, setGallerySource] = useState<'loading' | 'sheet' | 'empty' | 'error'>(
     sheetsWebhookUrl ? 'loading' : 'empty'
   );
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [rideCarouselIndex, setRideCarouselIndex] = useState(0);
   const { scrollYProgress } = useScroll();
 
@@ -363,8 +368,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = loading || menuOpen ? 'hidden' : '';
-  }, [loading, menuOpen]);
+    document.body.style.overflow = loading || menuOpen || lightboxIndex >= 0 ? 'hidden' : '';
+  }, [loading, menuOpen, lightboxIndex]);
 
   useEffect(() => {
     let active = true;
@@ -488,12 +493,6 @@ function App() {
       setRideCarouselIndex(0);
       return;
     }
-
-    const timer = window.setInterval(() => {
-      setRideCarouselIndex((prev) => (prev + 1) % rideCards.length);
-    }, 3200);
-
-    return () => window.clearInterval(timer);
   }, [rideCards]);
 
   const visibleRideCards: RideDisplayCard[] =
@@ -863,17 +862,20 @@ function App() {
 
               {gallerySource !== 'loading' && galleryImages.length > 0 &&
                 galleryImages.map((src, index) => (
-                  <motion.img
-                    key={src}
-                    src={src}
-                    loading="lazy"
-                    alt={`Dirt ride ${index + 1}`}
+                  <motion.button
+                    key={`${src}-${index}`}
+                    type="button"
+                    className="gallery-tile-btn"
+                    onClick={() => setLightboxIndex(index)}
+                    aria-label={`Open dirt ride image ${index + 1}`}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.15 }}
                     transition={{ duration: 0.55, delay: index * 0.03 }}
                     whileHover={{ y: -5, scale: 1.02 }}
-                  />
+                  >
+                    <img src={src} loading="lazy" alt={`Dirt ride ${index + 1}`} />
+                  </motion.button>
                 ))}
 
               {gallerySource !== 'loading' && galleryImages.length === 0 &&
@@ -952,6 +954,17 @@ function App() {
             </a>
           </motion.section>
         </main>
+
+        <Lightbox
+          open={lightboxIndex >= 0}
+          close={() => setLightboxIndex(-1)}
+          index={lightboxIndex}
+          plugins={[Counter]}
+          carousel={{ finite: true }}
+          counter={{ container: { style: { top: 'auto', bottom: '18px' } } }}
+          on={{ view: ({ index }) => setLightboxIndex(index) }}
+          slides={galleryImages.map((src) => ({ src }))}
+        />
       </div>
     </>
   );
